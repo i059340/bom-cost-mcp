@@ -1,0 +1,21 @@
+{
+  "name": "bom-cost-mcp",
+  "version": "1.0.0",
+  "description": "BOM Cost Optimizer MCP Server — exposes S/4HANA BOM data as MCP tools for Joule Desktop",
+  "main": "srv/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node srv/server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.15.0",
+    "@sap-cloud-sdk/connectivity": "^4.9.1",
+    "@sap-cloud-sdk/http-client": "^4.9.1",
+    "dotenv": "^18.0.7",
+    "express": "^4.21.2",
+    "xlsx": "^0.18.5",
+    "zod": "^3.24.0"
+  }
+}

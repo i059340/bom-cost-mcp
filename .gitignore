@@ -1,0 +1,21 @@
+# ── 敏感配置（绝对不能提交）──────────────────────────
+.env
+
+# ── 依赖（npm install 可以重新生成）──────────────────
+node_modules/
+package-lock.json
+
+# ── 运行时日志 ────────────────────────────────────────
+*.log
+debug.log
+
+# ── 生成的结果文件（数据量大，不需要版本控制）─────────
+bom_analysis_result.json
+price_fix_result.json
+price_update_result.json
+update_prices_errors.json
+CBD15-Li_import_report_*.json
+
+# ── 二进制 / 文档归档 ─────────────────────────────────
+*.zip
+*.docx

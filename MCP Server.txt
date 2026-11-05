@@ -1,0 +1,57 @@
+同事本机跑同款 MCP Server — 操作步骤
+你需要提供给同事的东西
+① 项目代码（打包 zip 发给他）
+
+
+C:\Users\I059340\my-project\bom-cost-mcp\
+node_modules 文件夹不用打包，太大了，同事自己安装
+
+② 一个 .env 配置文件（单独发，不要放在 zip 里）
+
+
+S4_HOST=https://my409379-api.s4hana.cloud.sap
+S4_USER=BTP_COST_OPT
+S4_PASS=（密码单独告知）
+PORT=8080
+同事本机的操作步骤
+第一步：装 Node.js（≥ 20 版本）
+去 nodejs.org 下载 LTS 版本安装
+
+验证：
+
+
+node -v   # 应该显示 v20.x 或以上
+第二步：解压项目，修一下 .env 路径
+
+当前代码里 .env 路径是硬编码的：
+
+
+// srv/server.js 第一行
+require('dotenv').config({ path: require('path').join(__dirname, '../../EPK/.env') });
+同事电脑上不一定有 EPK 这个目录，最简单的办法：
+
+把 .env 文件放到项目根目录 bom-cost-mcp/ 下，然后把第一行改成：
+
+
+require('dotenv').config();   // 默认从项目根目录读 .env
+第三步：安装依赖
+
+
+cd bom-cost-mcp
+npm install
+第四步：启动
+
+
+npm start
+# 看到监听 8080 端口的日志就成功了
+第五步：在 Claude Desktop 里添加连接器
+
+URL 填 http://localhost:8080/mcp
+协议 HTTP，无需身份验证
+注意事项
+事项	说明
+凭据共用	BTP_COST_OPT 是 S/4HANA API 用户，大家共用同一个账号访问同一套系统
+密码安全	.env 文件包含密码，不要提交到 Git / 发到公开频道，单独私信发给同事
+端口冲突	如果同事本机 8080 被占用，改 .env 里的 PORT=8081，URL 对应改 localhost:8081/mcp
+防火墙	只在本机跑，不涉及网络，不需要改防火墙
+本质上就三样东西：代码 + .env + Node.js 20，运行后各自独立连同一个 S/4HANA 系统。
