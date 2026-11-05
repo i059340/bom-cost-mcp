@@ -17,5 +17,4 @@ update_prices_errors.json
 CBD15-Li_import_report_*.json
 
 # ── 二进制 / 文档归档 ─────────────────────────────────
-*.zip
 *.docx
