@@ -350,6 +350,10 @@ const TOOLS = [
                 relevance: {
                     type: 'string',
                     description: 'ChangeRecordItemRelevance value for material/BOM links. Default "1". Only change if your S/4HANA system requires a specific value.'
+                },
+                personResponsible: {
+                    type: 'string',
+                    description: 'SAP user ID of the person responsible, e.g. \"LEVY.LI\". Assign this so the record is visible in CC02 for that user.'
                 }
             },
             required: ['title']
@@ -777,7 +781,8 @@ async function callTool(name, args) {
         log(`create_eco  title="${title}"  type=${changeType || 'S03'}`);
         const createResult = await chgPost(`${CHG_SRV}/A_ChangeRecord`, {
             ChangeRecordType:        changeType || 'S03',
-            ChgRecordDescriptionText: title
+            ChgRecordDescriptionText: title,
+            ...(args.personResponsible ? { PersonResponsible: args.personResponsible } : {})
         });
         const chgUuid = createResult?.d?.ChangeRecordUUID || '';
         const chgNum  = createResult?.d?.ChangeRecord     || '';
