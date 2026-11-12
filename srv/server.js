@@ -730,7 +730,7 @@ async function callTool(name, args) {
 
         const auth     = Buffer.from(`${process.env.S4_USER}:${process.env.S4_PASS}`).toString('base64');
         const hostname = new URL(process.env.S4_HOST).hostname;
-        const rel      = relevance || '1';
+        const rel      = relevance;   // undefined when not passed → relevance field omitted from POST body
 
         // ── Step 1: fetch CSRF token from Change Record service ──────────
         const { csrfToken, sessionCookie } = await new Promise((resolve, reject) => {
@@ -793,11 +793,9 @@ async function callTool(name, args) {
         // ── Step 3: link affected materials ─────────────────────────────
         for (const mat of (materials || [])) {
             try {
-                await chgPost(`${CHG_SRV}/A_ChangeRecordReferenceMat`, {
-                    ChangeRecordUUID:          chgUuid,
-                    Material:                  mat,
-                    ChangeRecordItemRelevance: rel
-                });
+                const matBody = { ChangeRecordUUID: chgUuid, Material: mat };
+                if (rel) matBody.ChangeRecordItemRelevance = rel;
+                await chgPost(`${CHG_SRV}/A_ChangeRecordReferenceMat`, matBody);
                 linked.materials.push(mat);
                 log(`create_eco  linked material ${mat}`);
             } catch (e) {
@@ -809,14 +807,15 @@ async function callTool(name, args) {
         // ── Step 4: link affected BOMs ───────────────────────────────────
         for (const bom of (boms || [])) {
             try {
-                await chgPost(`${CHG_SRV}/A_ChgRecdRefEngBOM`, {
+                const bomBody = {
                     ChangeRecordUUID:           chgUuid,
                     Material:                   bom.material,
                     Plant:                      bom.plant,
                     BillOfMaterialVariantUsage: bom.usage   || '1',
-                    BillOfMaterialVariant:      bom.variant || '1',
-                    ChangeRecordItemRelevance:  rel
-                });
+                    BillOfMaterialVariant:      bom.variant || '1'
+                };
+                if (rel) bomBody.ChangeRecordItemRelevance = rel;
+                await chgPost(`${CHG_SRV}/A_ChgRecdRefEngBOM`, bomBody);
                 linked.boms.push(`${bom.material}/${bom.plant}`);
                 log(`create_eco  linked BOM ${bom.material}/${bom.plant}`);
             } catch (e) {
