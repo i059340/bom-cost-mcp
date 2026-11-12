@@ -349,7 +349,7 @@ const TOOLS = [
                 },
                 relevance: {
                     type: 'string',
-                    description: 'ChangeRecordItemRelevance value for material/BOM links. Default "1". Only change if your S/4HANA system requires a specific value.'
+                    description: 'ChangeRecordItemRelevance for material/BOM links. Valid values: S01=更改(default), S02=创建, S03=更改触发器(BOM only), S05=新版本(BOM only).'
                 },
                 personResponsible: {
                     type: 'string',
@@ -730,7 +730,7 @@ async function callTool(name, args) {
 
         const auth     = Buffer.from(`${process.env.S4_USER}:${process.env.S4_PASS}`).toString('base64');
         const hostname = new URL(process.env.S4_HOST).hostname;
-        const rel      = relevance;   // undefined when not passed → relevance field omitted from POST body
+        const rel      = relevance || 'S01'; // S01=更改, S02=创建, S03=更改触发器(BOM only), S05=新版本(BOM only)
 
         // ── Step 1: fetch CSRF token from Change Record service ──────────
         const { csrfToken, sessionCookie } = await new Promise((resolve, reject) => {
